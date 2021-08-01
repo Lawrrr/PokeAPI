@@ -1845,19 +1845,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _components_LoginRegister_Login_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/LoginRegister/Login.vue */ "./resources/js/components/LoginRegister/Login.vue");
 //
 //
 //
 //
 //
 //
-
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: 'App',
-  components: {
-    Login: _components_LoginRegister_Login_vue__WEBPACK_IMPORTED_MODULE_0__.default
-  }
+  name: 'App'
 });
 
 /***/ }),
