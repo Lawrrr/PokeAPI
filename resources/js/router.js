@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './components/Home'
+import Base from './components/Base'
 import Login from './components/LoginRegister/Login'
 import Register from './components/LoginRegister/Register'
 
@@ -12,7 +12,7 @@ export default new Router({
     {
       path: '/',
       name:  'Home',
-      component: Home,
+      component: Base,
       meta: {
         requiresAuth: true
       }

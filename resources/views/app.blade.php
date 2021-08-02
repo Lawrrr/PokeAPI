@@ -17,4 +17,10 @@
     <script src="{{ mix('js/app.js') }}" type="text/javascript"></script>
 </body>
 
+<style>
+    body {
+        background-color: #f0f0f0;
+    }
+</style>
+
 </html>

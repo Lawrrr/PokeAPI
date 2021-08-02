@@ -97,7 +97,6 @@
 </template>
 
 <script>
-  import axios from 'axios'
   import DatePicker from 'vue2-datepicker'
   import 'vue2-datepicker/index.css';
 
