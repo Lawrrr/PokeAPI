@@ -1,14 +1,14 @@
 <template>
   <div>
     <b-navbar toggleable="lg" type="dark">
-      <b-navbar-brand to="/">PokeAPI</b-navbar-brand>
+      <b-navbar-brand href="/">PokeAPI</b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
-          <b-nav-item to="/">Pokemons</b-nav-item>
-          <b-nav-item to="/trainers">Trainers</b-nav-item>
+          <b-nav-item href="/">Pokemons</b-nav-item>
+          <b-nav-item href="/trainers">Trainers</b-nav-item>
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->
@@ -22,7 +22,7 @@
               <em>User</em>
             </template>
             <!-- Using 'button-content' slot -->
-            <b-dropdown-item to="/profile">Profile</b-dropdown-item>
+            <b-dropdown-item href="/profile">Profile</b-dropdown-item>
             <b-dropdown-item @click="logout">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>

@@ -18,6 +18,14 @@ export default new Router({
       }
     },
     {
+      path: '/profile',
+      name:  'Profile',
+      component: Base,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: '/login',
       name: 'Login',
       component: Login,

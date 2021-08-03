@@ -5,9 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 // Contollers
 use App\Http\Controllers\AuthController;
-
-// Models
-use App\Models\Pokemon;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,10 +18,6 @@ use App\Models\Pokemon;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -31,9 +25,7 @@ Route::post('/login', [AuthController::class, 'login']);
 // Protected routes
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-
-    // For testing of Pokemon model
-    Route::get('pokemon/all', function () {
-        return Pokemon::all();
-    }); 
+    
+    Route::get('/user/profile/get', [UserController::class, 'profile']);
+    Route::post('/user/profile/update', [UserController::class, 'update']);
 });

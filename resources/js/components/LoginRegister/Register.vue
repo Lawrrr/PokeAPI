@@ -1,5 +1,13 @@
 <template>
   <div class="container">
+    <div class="row mt-2 justify-content-center">
+      <Alert
+        :displayAlert="displayAlert"
+        :message="alertMessage"
+        :type="'danger'"
+        @closeAlert="closeAlert"
+      />
+    </div>
     <div class="row">
       <div class="register-form">
         <form v-on:submit.prevent="register">
@@ -97,13 +105,15 @@
 </template>
 
 <script>
+  import Alert from '../Alert.vue'
   import DatePicker from 'vue2-datepicker'
   import 'vue2-datepicker/index.css';
 
   export default {
     name: 'Register',
     components: {
-      DatePicker
+      DatePicker,
+      Alert
     },
     data() {
       return {
@@ -115,10 +125,15 @@
           password: '',
           password_confirmation: '',
           date_of_birth: new Date()
-        }
+        },
+        alertMessage: '',
+        displayAlert: false
       }
     },
     methods: {
+      closeAlert () {
+        this.displayAlert = false
+      },
       register () {
         if(this.password === this.password_confirmation) {
           axios.post('/api/register', this.formData)
@@ -135,10 +150,12 @@
           })
           .catch((err) => {
             console.log(err)
-            alert('Registration not successful')
+            this.displayAlert = true
+            this.alertMessage = 'Registration not successful'
           })
         } else {
-          alert('Password and confirm password must be identical')
+          this.displayAlert = true
+          this.alertMessage = 'Password and confirm password must be identical'
         }
       },
     }
