@@ -68,6 +68,7 @@
         axios.post('/api/login', this.formData)
         .then((res) => {
           localStorage.setItem('userToken', res.data.token)
+          localStorage.setItem('userId', res.data.user.id)
           this.email = ''
           this.password = ''
           this.$router.push({ name: 'Home' })

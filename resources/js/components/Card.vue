@@ -19,6 +19,15 @@
       <div v-if="cardType === 'pokemon'">
         <b-card-sub-title class="mb-2">Pokemon Type</b-card-sub-title>
         <b-card-text>
+          <p v-if="liked">
+            You like this Pokemon 
+            <b-icon icon="hand-thumbs-up" />
+          </p>
+          <p v-else-if="disliked">
+            You dislike this Pokemon
+            <b-icon icon="hand-thumbs-down" />
+          </p>
+          <p else></p>
           <ul>
             <li v-for="type in pokemonType">{{ formatText(type.type.name) }}</li>
           </ul>
@@ -50,16 +59,25 @@
           v-else
           class="text-center"
         >
-          <div v-if="isLiked === 1 || isDisliked === 1">
-            <b-button variant="warning">
+          <div v-if="liked === true || disliked === true">
+            <b-button 
+              variant="warning"
+              @click="removePokemon"
+            >
               Remove Pokemon
             </b-button>
           </div>
           <div v-else>
-            <b-button href="#" variant="primary">
+            <b-button 
+              variant="primary"
+              @click="likePokemon"
+            >
               <b-icon icon="hand-thumbs-up" />
             </b-button>
-            <b-button href="#" variant="danger">
+            <b-button 
+              variant="danger"
+              @click="dislikePokemon"
+            >
               <b-icon icon="hand-thumbs-down" />
             </b-button>
           </div>
@@ -106,6 +124,14 @@ export default {
     userFullName: {
       type: String,
       default: ''
+    },
+    liked: {
+      type: Boolean,
+      default: false
+    },
+    disliked: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -117,6 +143,15 @@ export default {
   methods: {
     showModal() {
       this.$root.$emit('bv::show::modal', 'edit-modal', '#btnShow')
+    },
+    removePokemon() {
+      this.$emit('removePokemon', this.name)
+    },
+    likePokemon() {
+      this.$emit('likePokemon', this.name)
+    },
+    dislikePokemon() {
+      this.$emit('dislikePokemon', this.name)
     },
     isPokemonCard () {
       return this.cardType ==='pokemon'

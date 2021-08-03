@@ -27,8 +27,12 @@
     },
     data () {
       return {
-        currentRoute: this.$route.name
+        currentRoute: this.$route.name,
+        userToken: localStorage.getItem('userToken'),
       }
+    },
+    mounted () {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${this.userToken}` 
     }
   }
 </script>
