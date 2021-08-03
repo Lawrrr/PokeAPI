@@ -13,7 +13,6 @@
         :name="userData.username"
         :userFullName="fullName"
         :image="userData.image"
-        :types="[]"
         :isOwnProfile="true"
         :cardType="'personal'"
         :birthday="userData.date_of_birth"
@@ -162,6 +161,8 @@
           this.getUserData()
           this.colorType = 'success'
           this.alertMessage = res.data.message
+          this.likedPokemons = []
+          this.dislikedPokemons = []
         })
         .catch((err) => {
           console.log(err)

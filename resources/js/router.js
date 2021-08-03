@@ -26,6 +26,14 @@ export default new Router({
       }
     },
     {
+      path: '/trainers',
+      name:  'Trainer',
+      component: Base,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: '/login',
       name: 'Login',
       component: Login,
