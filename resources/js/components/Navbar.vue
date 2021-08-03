@@ -13,13 +13,9 @@
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
-          <b-nav-form>
-            <b-form-input size="sm" class="mr-sm-2" placeholder="Search Pokemon..."></b-form-input>
-            <b-button size="sm" class="my-2 mr-2 my-sm-0 btn btn-success" type="submit">Search</b-button>
-          </b-nav-form>
           <b-nav-item-dropdown right>
             <template #button-content>
-              <em>User</em>
+              <b-icon icon="person-fill" />
             </template>
             <!-- Using 'button-content' slot -->
             <b-dropdown-item href="/profile">Profile</b-dropdown-item>
@@ -40,9 +36,6 @@ export default {
       return {
         userToken: localStorage.getItem('userToken')
       }
-    },
-    created () {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${this.userToken}`
     },
     methods: {
       logout () {

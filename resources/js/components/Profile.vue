@@ -4,7 +4,7 @@
       <Alert 
         :displayAlert="displayAlert"
         :message="alertMessage"
-        :type="'success'"
+        :type="colorType"
         @closeAlert="closeAlert"
       />
     </div>
@@ -13,7 +13,7 @@
         :name="userData.username"
         :userFullName="fullName"
         :image="userData.image"
-        :types="testCardData[0].types"
+        :types="[]"
         :isOwnProfile="true"
         :cardType="'personal'"
         :birthday="userData.date_of_birth"
@@ -25,7 +25,7 @@
       <div class="row mb-3">
         
         <div 
-          v-for="pokemon in testCardData"
+          v-for="pokemon in likedPokemons"
           class="col-md-4"
         >
           <Card
@@ -33,13 +33,16 @@
             :image="pokemon.sprite"
             :pokemonType="pokemon.types"
             :setHeight="true"
+            :liked="pokemon.liked"
+            :disliked="pokemon.disliked"
+            @removePokemon="removePokemon"
           />
         </div>
       </div>
       <h3>Disliked</h3>
       <div class="row mb-5">
         <div 
-          v-for="pokemon in testCardData"
+          v-for="pokemon in dislikedPokemons"
           class="col-md-4"
         >
           <Card
@@ -47,6 +50,9 @@
             :image="pokemon.sprite"
             :pokemonType="pokemon.types"
             :setHeight="true"
+            :liked="pokemon.liked"
+            :disliked="pokemon.disliked"
+            @removePokemon="removePokemon"
           />
         </div>
       </div>
@@ -123,6 +129,11 @@
     },
     data () {
       return {
+        pokeApi: 'https://pokeapi.co/api/v2',
+        userId: localStorage.getItem('userId'),
+        userToken: localStorage.getItem('userToken'),
+        likedPokemons: [],
+        dislikedPokemons: [],
         userData: {
           username : '',
           first_name: '',
@@ -131,43 +142,15 @@
           image: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/33a43285-a481-406e-a6a2-dfde98a9359b/dawqtd5-ab0a2edd-2200-4899-9dae-84095a9bba05.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzMzYTQzMjg1LWE0ODEtNDA2ZS1hNmEyLWRmZGU5OGE5MzU5YlwvZGF3cXRkNS1hYjBhMmVkZC0yMjAwLTQ4OTktOWRhZS04NDA5NWE5YmJhMDUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.iRxT6vkCTmmQXvjBhpjDJoCjS_U1EaFVqJbHsN_Uj2s'
         },
         fullName: '',
-        showModal: false,
-        userToken: localStorage.getItem('userToken'),
         alertMessage: '',
+        showModal: false,
         displayAlert: false,
-        testCardData: [
-          {
-            "name":"weedle",
-            "sprite":"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/13.png",
-            "types":[
-              {"slot":1,"type":{"name":"bug","url":"https://pokeapi.co/api/v2/type/7/"}},
-              {"slot":2,"type":{"name":"poison","url":"https://pokeapi.co/api/v2/type/4/"}}
-            ]
-          },
-          {
-            "name":"weedle",
-            "sprite":"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/13.png",
-            "types":[
-              {"slot":1,"type":{"name":"bug","url":"https://pokeapi.co/api/v2/type/7/"}},
-              {"slot":2,"type":{"name":"poison","url":"https://pokeapi.co/api/v2/type/4/"}}
-            ]
-          },
-          {
-            "name":"weedle",
-            "sprite":"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/13.png",
-            "types":[
-              {"slot":1,"type":{"name":"bug","url":"https://pokeapi.co/api/v2/type/7/"}},
-              {"slot":2,"type":{"name":"poison","url":"https://pokeapi.co/api/v2/type/4/"}}
-            ]
-          },
-        ]
+        colorType: ''
       }
     },
-    created () {
-      // axios.defaults.headers.common['Authorization'] = `Bearer ${this.userToken}`
-    },
     mounted () {
-      this.getUserData();
+      axios.defaults.headers.common['Authorization'] = `Bearer ${this.userToken}` 
+      this.getUserData()
     },
     methods: {
       closeAlert () {
@@ -177,6 +160,7 @@
         axios.post('/api/user/profile/update', this.userData)
         .then((res) => {
           this.getUserData()
+          this.colorType = 'success'
           this.alertMessage = res.data.message
         })
         .catch((err) => {
@@ -188,6 +172,25 @@
         })
       },
       getUserData () {
+        // Retrieve the liked and disliked Pokemons
+        axios.get(`/api/user/${this.userId}/pokemon`)
+        .then((res) => {
+          let likedList = res.data.liked
+          let dislikedList = res.data.disliked
+
+          for (let index in likedList) {
+            this.getPokemonDetail(likedList[index], 'liked')
+          }
+          
+          for (let index in dislikedList) {
+            this.getPokemonDetail(dislikedList[index], 'disliked')
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+
+        // Get user data
         axios.get('/api/user/profile/get')
         .then((res) => {
           let user = res.data.user
@@ -199,6 +202,49 @@
         })
         .catch((err) => {
           console.log(err)
+        })
+      },
+      getPokemonDetail (list, likedDisliked) {
+        axios.get(`${this.pokeApi}/pokemon/${list['pokemon_name']}`)
+        .then((res) => {
+          if(likedDisliked === 'liked') {
+            this.likedPokemons.push({
+              'name': res.data.species.name,
+              'types': res.data.types,
+              'sprite': res.data.sprites.front_default,
+              'liked': true,
+              'disliked': false
+            })
+          } else {
+            this.dislikedPokemons.push({
+              'name': res.data.species.name,
+              'types': res.data.types,
+              'sprite': res.data.sprites.front_default,
+              'liked': false,
+              'disliked': true
+            })
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      },
+      removePokemon (pokemon) {
+        axios.post('/api/user/pokemon/remove', {
+          pokemon_name: pokemon
+        })
+        .then((res) => {
+          this.getUserData()
+          this.colorType = 'warning'
+          this.alertMessage = res.data.message
+          this.likedPokemons = []
+          this.dislikedPokemons = []
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => {
+          this.displayAlert = true
         })
       }
     }

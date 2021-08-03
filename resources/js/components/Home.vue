@@ -1,5 +1,13 @@
 <template>
   <div>
+    <div class="row justify-content-center mt-2">
+      <Alert 
+        :displayAlert="displayAlert"
+        :message="alertMessage"
+        :type="colorType"
+        @closeAlert="closeAlert"
+      />
+    </div>
     <!-- Pagination -->
     <div 
       v-show="!loading"
@@ -30,6 +38,8 @@
           :image="pokemon.sprite"
           :pokemonType="pokemon.types"
           :setHeight="true"
+          @likePokemon="likePokemon"
+          @dislikePokemon="dislikePokemon"
         />
       </div>
     </div>
@@ -44,26 +54,64 @@
 
 <script>
   import Card from './Card.vue'
+  import Alert from './Alert.vue'
 
   export default {
     name: 'Home',
     components: {
-      Card
+      Card,
+      Alert
     },
     data () {
       return {
+        userId: localStorage.getItem('userId'),
         pokeApi: 'https://pokeapi.co/api/v2',
+        userPokemons: [],
         pokemons: [],
         totalPokemon: 0,
         currentPage: 1,
-        loading: false
+        loading: false,
+        alertMessage: '',
+        displayAlert: false,
+        colorType: ''
       }
     },
     mounted () {
       this.getAllPokemon(`${this.pokeApi}/pokemon?limit=20&offset=0`)
     },
     methods: {
-      changePage () {
+      closeAlert () {
+        this.displayAlert = false
+      },
+      likePokemon (pokemon) {
+        axios.post(`/api/user/pokemon/like`, { 
+          pokemon_name: pokemon
+         })
+         .then((res) => {
+            this.alertMessage = res.data.message
+            this.displayAlert = true
+            this.colorType = 'primary'
+            this.getUserPokemon()
+         })
+         .catch((err) => {
+           console.log(err)
+         })
+      },
+      dislikePokemon (pokemon) {
+        axios.post(`/api/user/pokemon/dislike`, { 
+          pokemon_name: pokemon
+         })
+         .then((res) => {
+           this.alertMessage = res.data.message
+           this.displayAlert = true
+           this.colorType = 'danger'
+           this.getUserPokemon()
+         })
+         .catch((err) => {
+           console.log(err)
+         })
+      },
+      changePage (pokemon) {
         let getOffest = (this.currentPage - 1) * 20
         this.pokemons = []
         this.getAllPokemon(`${this.pokeApi}/pokemon?limit=20&offset=${getOffest}`)
@@ -78,7 +126,8 @@
           for (let index in res.data.results) {
             setTimeout(() => {
               this.getPokemonDetail(pokemon[index].name)
-            }, 1000) 
+            }, 1000)
+            this.getUserPokemon()
           }
         })
         .catch((err) => {
@@ -99,6 +148,25 @@
             'types': res.data.types,
             'sprite': res.data.sprites.front_default
           })
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      },
+      // Remove pokemons from list if liked or disliked by user
+      // A bit buggy sometimes doesn't remove a Pokemon from the list
+      getUserPokemon (pokemon) {
+        axios.get(`/api/user/${this.userId}/pokemon`)
+        .then((res) => {
+          this.userPokemons = res.data.liked.concat(res.data.disliked)
+              for (var i = 0, len = this.userPokemons.length; i < len; i++) { 
+                for (var j = 0, len2 = this.pokemons.length; j < len2; j++) { 
+                    if (this.userPokemons[i].pokemon_name === this.pokemons[j].name) {
+                        this.pokemons.splice(j, 1);
+                        len2=this.pokemons.length;
+                    }
+                }
+            }
         })
         .catch((err) => {
           console.log(err)
