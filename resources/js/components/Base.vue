@@ -9,6 +9,9 @@
       <div v-else-if="currentRoute === 'Profile'">
         <Profile />
       </div>
+      <div v-else>
+        <Trainer />
+      </div>
     </div>
   </div>
 </template>
@@ -17,13 +20,15 @@
   import Navbar from './Navbar.vue'
   import Home from './Home.vue'
   import Profile from './Profile.vue'
+  import Trainer from './Trainer.vue'
 
   export default {
     name: 'Base',
     components: {
       Navbar,
       Home,
-      Profile
+      Profile,
+      Trainer
     },
     data () {
       return {

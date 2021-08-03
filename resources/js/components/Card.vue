@@ -15,8 +15,25 @@
         <h4 class="mb-0">{{ formatText(name) }}</h4>
       </div>
     </template>
+
     <template .body>
-      <div v-if="cardType === 'pokemon'">
+      <div v-if="cardType === 'trainer'">
+        <b-card-sub-title class="mb-2">Name: {{ userFullName }}</b-card-sub-title>
+        <b-card-text>
+          <span>I challenge you!</span><br />
+        </b-card-text>
+        <slot name='trainer-pokemons'></slot>
+      </div>
+
+      <div v-else-if="cardType === 'personal'">
+        <b-card-sub-title class="mb-2">Name: {{ userFullName }}</b-card-sub-title>
+        <b-card-text>
+          <span>Gotta catch em' all!</span><br />
+          <span>My birthday is on: <b>{{ formatDate(birthday) }}</b></span>
+        </b-card-text>
+      </div>
+
+      <div v-else-if="isPokemonCard">
         <b-card-sub-title class="mb-2">Pokemon Type</b-card-sub-title>
         <b-card-text>
           <p v-if="liked">
@@ -33,16 +50,16 @@
           </ul>
         </b-card-text>
       </div>
-      <div v-else>
-        <b-card-sub-title class="mb-2">Name: {{ userFullName }}</b-card-sub-title>
-        <b-card-text>
-          <span>Gotta catch em' all!</span><br />
-          <span>My birthday is on: <b>{{ formatDate(birthday) }}</b></span>
-        </b-card-text>
-      </div>
     </template>
+
     <template #footer>
-      <div v-show="isPokemonCard || cardType === 'personal'">
+      <div 
+        v-if="cardType === 'trainer'"
+        class="text-center"
+      >
+        <b>Copyright 2021 PokeApi.</b>
+      </div>
+      <div v-else-if="isPokemonCard || cardType === 'personal'">
         <div
           v-if="isOwnProfile"
           class="text-center"
@@ -55,6 +72,7 @@
             Edit Profile
           </b-button>
         </div>
+
         <div
           v-else
           class="text-center"
@@ -115,7 +133,7 @@ export default {
     },
     cardType: {
       type: String,
-      default: 'pokemon'
+      default: ''
     },
     isOwnProfile: {
       type: Boolean,
@@ -132,12 +150,12 @@ export default {
     disliked: {
       type: Boolean,
       default: false
-    }
-  },
-  data () {
-    return {
-      isLiked: 0,
-      isDisliked: 0
+    },
+    userLikesDislikes: {
+      type: Array,
+      default () {
+        return []
+      }
     }
   },
   methods: {
@@ -154,7 +172,7 @@ export default {
       this.$emit('dislikePokemon', this.name)
     },
     isPokemonCard () {
-      return this.cardType ==='pokemon'
+      return this.cardType === 'pokemon'
     },
     formatDate (val) {
       const months = ["January", "February", "March","April", "May", "June", "July", "August", "September", "October", "November", "December"];

@@ -66,4 +66,25 @@ class UserController extends Controller
 
     return response($response);
   }
+
+  public function trainerList()
+  {
+    $user = Auth::user();
+
+    if ($user) {
+      $users = User::where('id', '!=', $user->id)
+                    ->with('userLikesDislikes')
+                    ->get();
+
+      $response = [
+        "users" => $users
+      ];
+    } else {
+      $response = [
+        "message" => "User not found..."
+      ];
+    }
+
+    return response($response);
+  }
 }
