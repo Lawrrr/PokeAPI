@@ -16,13 +16,12 @@ class CreateUserLikesDislikesTable extends Migration
         Schema::create('user_likes_dislikes', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('pokemon_id');
+            $table->string('pokemon_name');
             $table->boolean('is_liked')->default(0);
             $table->boolean('is_disliked')->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('pokemon_id')->references('id')->on('pokemon')->onDelete('cascade');
         });
     }
 

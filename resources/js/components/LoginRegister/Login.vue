@@ -32,20 +32,38 @@
         <p class="text-center"><router-link to="/register">Create an Account</router-link></p>
       </div>
     </div>
+    <div class="row mt-2 justify-content-center">
+      <Alert
+        :displayAlert="displayAlert"
+        :message="alertMessage"
+        :type="'danger'"
+        @closeAlert="closeAlert"
+      />
+    </div>
   </div>
 </template>
 
 <script>
+  import Alert from '../Alert.vue'
+
   export default {
+    components: {
+      Alert
+    },
     data() {
       return {
         formData: {
           email: '',
           password: ''
-        }
+        },
+        alertMessage: '',
+        displayAlert: false
       }
     },
     methods: {
+      closeAlert () {
+        this.displayAlert = false
+      },
       login () {
         axios.post('/api/login', this.formData)
         .then((res) => {
@@ -56,7 +74,8 @@
         })
         .catch((err) => {
           console.log(err)
-          alert("Incorrect email or password")
+          this.displayAlert = true
+          this.alertMessage = 'Incorrect email or password...'
         })
       }
     }

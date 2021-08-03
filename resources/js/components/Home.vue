@@ -25,10 +25,11 @@
         v-for="pokemon in pokemons"
         class="col-md-3 mb-4"
       >
-        <Card 
+        <Card
           :name="pokemon.name"
-          :sprite="pokemon.sprite"
-          :types="pokemon.types"
+          :image="pokemon.sprite"
+          :pokemonType="pokemon.types"
+          :setHeight="true"
         />
       </div>
     </div>
